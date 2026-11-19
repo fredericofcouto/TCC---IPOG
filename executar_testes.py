@@ -51,13 +51,21 @@ def conferir_interrupcao(pasta):
 def main():
     pasta = Path(__file__).resolve().parent
     pacote = pasta / "Dados_do_ensaio_TCC.zip"
-    if not pacote.is_file():
-        raise FileNotFoundError(f"Coloque {pacote.name} na mesma pasta que este script.")
-
     with tempfile.TemporaryDirectory(prefix="tcc_ensaio_") as temporaria:
         dados = Path(temporaria)
-        with zipfile.ZipFile(pacote) as zip_dados:
-            zip_dados.extractall(dados)
+        if pacote.is_file():
+            with zipfile.ZipFile(pacote) as zip_dados:
+                zip_dados.extractall(dados)
+        elif (pasta / "pos_fechamento" / "classificar.py").is_file() and (
+            pasta / "interrupcao" / "medir.py"
+        ).is_file():
+            for nome in ("pos_fechamento", "interrupcao"):
+                shutil.copytree(pasta / nome, dados / nome)
+        else:
+            raise FileNotFoundError(
+                f"Coloque este script junto de {pacote.name} ou na pasta extraída "
+                "que contém pos_fechamento e interrupcao."
+            )
 
         print("1/2 - Conferindo a classificação pós-fechamento...", flush=True)
         pos_fechamento = conferir_pos_fechamento(dados / "pos_fechamento")
