@@ -4,17 +4,28 @@ O arquivo [Dados_do_ensaio_TCC.zip](./Dados_do_ensaio_TCC.zip) reúne scripts, r
 
 ## Conferência rápida no Windows
 
+### Começando pelo GitHub
+
 1. No topo do repositório, clique em **Code → Download ZIP** e escolha **Extrair Tudo** no Windows.
 2. Abra a pasta extraída que contém `executar_testes.py` e `Dados_do_ensaio_TCC.zip`. Clique na barra de endereço do Explorador, digite `powershell` e pressione **Enter**.
-3. Na janela aberta, cole este comando e pressione **Enter**.
+3. Na janela aberta, rode o comando abaixo. O script extrai o ZIP de dados automaticamente.
 
 ```powershell
 python .\executar_testes.py
 ```
 
-O script usa o Python 3 já instalado, extrai o ZIP de dados para uma pasta temporária e roda as duas conferências. O resultado esperado é **12 acertos e 20 casos inconclusivos em 32 sessões**, seguido de **dois hashes SHA-256 iguais**. Os CSVs recalculados ficam em uma nova pasta `Resultados_TCC_...`, ao lado do script.
+### Se você já extraiu o ZIP de dados
 
-Se o Windows reconhecer o Python pelo iniciador `py`, o mesmo comando pode ser executado como `py -3 .\executar_testes.py`. Se ambos os comandos estiverem indisponíveis, instale o [Python para Windows](https://www.python.org/downloads/windows/) e reabra o PowerShell.
+Na pasta que contém **`pos_fechamento` e `interrupcao`**, abra o PowerShell e rode estes dois comandos. O primeiro baixa o script atualizado do GitHub. O segundo executa a conferência usando uma cópia temporária dos dados extraídos.
+
+```powershell
+Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/fredericofcouto/TCC---IPOG/main/executar_testes.py' -OutFile '.\executar_testes.py' -ErrorAction Stop
+python .\executar_testes.py
+```
+
+O resultado esperado é **12 acertos e 20 casos inconclusivos em 32 sessões**, seguido de **dois hashes SHA-256 iguais**. Os CSVs recalculados ficam em uma nova pasta `Resultados_TCC_...`, ao lado do script.
+
+Se o Windows reconhecer o Python pelo iniciador `py`, execute `py -3 .\executar_testes.py` no lugar de `python .\executar_testes.py`. Se ambos os comandos estiverem indisponíveis, instale o [Python para Windows](https://www.python.org/downloads/windows/) e reabra o PowerShell.
 
 | Se você quer… | Comece por |
 | --- | --- |
