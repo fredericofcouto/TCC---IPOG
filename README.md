@@ -1,78 +1,60 @@
 # Material suplementar do TCC sobre vestígios de navegador
 
-O arquivo [Dados_do_ensaio_TCC.zip](./Dados_do_ensaio_TCC.zip) reúne scripts, registros por sessão, perfis de laboratório, imagens sintéticas de referência e resultados em CSV. As coletas foram feitas em um servidor local com imagens sintéticas.
+O [ZIP do ensaio](./Dados_do_ensaio_TCC.zip) reúne os roteiros, as imagens sintéticas de referência, os registros por sessão e os recortes dos perfis de laboratório. O [script de conferência](./executar_testes.py) recalcula os resultados a partir dos dados publicados e usa apenas a biblioteca padrão do Python 3.
 
 ## Conferência rápida no Windows
 
-### Começando pelo GitHub
-
-1. No topo do repositório, clique em **Code → Download ZIP** e escolha **Extrair Tudo** no Windows.
-2. Abra a pasta extraída que contém `executar_testes.py` e `Dados_do_ensaio_TCC.zip`. Clique na barra de endereço do Explorador, digite `powershell` e pressione **Enter**.
-3. Na janela aberta, rode o comando abaixo. O script extrai o ZIP de dados automaticamente.
+1. No GitHub, clique em **Code → Download ZIP** e escolha **Extrair Tudo** no Windows.
+2. Abra a pasta extraída que contém, lado a lado, `executar_testes.py` e `Dados_do_ensaio_TCC.zip`. Clique na barra de endereço do Explorador, digite `powershell` e pressione **Enter**.
+3. Execute o comando abaixo. O script extrai o ZIP de dados e trabalha em uma cópia temporária.
 
 ```powershell
 python .\executar_testes.py
 ```
 
-### Se você já extraiu o ZIP de dados
+<details>
+<summary>Já extraiu o ZIP de dados?</summary>
 
-Na pasta que contém **`pos_fechamento` e `interrupcao`**, abra o PowerShell e rode estes dois comandos. O primeiro baixa o script atualizado do GitHub. O segundo executa a conferência usando uma cópia temporária dos dados extraídos.
+Na pasta que contém `pos_fechamento` e `interrupcao`, abra o PowerShell e execute estas linhas. A primeira baixa o script. A segunda roda a conferência usando a pasta já extraída.
 
 ```powershell
 Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/fredericofcouto/TCC---IPOG/main/executar_testes.py' -OutFile '.\executar_testes.py' -ErrorAction Stop
 python .\executar_testes.py
 ```
 
-O resultado esperado é **12 acertos e 20 casos inconclusivos em 32 sessões**, seguido de **dois hashes SHA-256 iguais**. Os CSVs recalculados ficam em uma nova pasta `Resultados_TCC_...`, ao lado do script.
+</details>
 
-Se o Windows reconhecer o Python pelo iniciador `py`, execute `py -3 .\executar_testes.py` no lugar de `python .\executar_testes.py`. Se ambos os comandos estiverem indisponíveis, instale o [Python para Windows](https://www.python.org/downloads/windows/) e reabra o PowerShell.
+Em sistemas que disponibilizam o Python pelo iniciador `py`, use `py -3 .\executar_testes.py`. Em Linux ou WSL, use `python3 ./executar_testes.py`. [Instalador do Python para Windows](https://www.python.org/downloads/windows/)
 
-| Se você quer… | Comece por |
+| Conferência | Resultado esperado | Arquivo gerado |
+| --- | --- | --- |
+| Classificação após o fechamento | 12 acertos e 20 casos inconclusivos em 32 sessões | `pos_fechamento_recalculado.csv` |
+| Ensaio de interrupção | Mesmo SHA-256 para o CSV recalculado e o original das 16 sessões | `interrupcao_recalculada.csv` |
+
+Os dois CSVs ficam em uma pasta nova `Resultados_TCC_...`, ao lado do script. A conferência processa os registros publicados. Para gerar novas sessões com os navegadores, siga a seção de coleta.
+
+## Dados publicados e integridade
+
+| Caminho dentro do ZIP | Conteúdo |
 | --- | --- |
-| Ler as medições originais | Abra os arquivos CSV descritos na seção 1 |
-| Conferir os resultados sem instalar navegadores | Use o comando da conferência rápida acima |
-| Gerar novas sessões no ambiente do estudo | Execute a seção 3 em Linux x86-64 ou WSL em um computador x86-64 |
+| `serie_1/resultados.csv` e `serie_2/resultados.csv` | Séries iniciais no Firefox, com 16 sessões cada |
+| `pos_fechamento/resultados.csv` | Classificação das 32 sessões após o fechamento |
+| `interrupcao/resultados.csv` | Resultado das 16 sessões com respostas integrais ou interrompidas |
 
-## 1. Baixar e localizar os resultados
+Abra os CSVs em uma planilha para consultar as medições originais. As instruções de conferência manual estão nos arquivos `LEIA-ME.txt` da raiz e das pastas `pos_fechamento` e `interrupcao`.
 
-Abra o [arquivo ZIP no GitHub](./Dados_do_ensaio_TCC.zip), clique no botão de download e extraia o conteúdo para uma pasta nova. Use como raiz a pasta que contém `LEIA-ME.txt`, `ensaio.py` e as subpastas `pos_fechamento` e `interrupcao`.
+O SHA-256 de `Dados_do_ensaio_TCC.zip` é `2ecf66a5174d7371736ff6efe0a61b4cdee89a13697bc0bd51bd59efec4f94da`. Para verificar os arquivos internos em Linux ou WSL, execute os dois comandos abaixo a partir da raiz do ZIP de dados extraído.
 
-| Caminho dentro do ZIP | O que contém |
-| --- | --- |
-| `serie_1/resultados.csv` e `serie_2/resultados.csv` | Duas séries iniciais no Firefox com 16 sessões cada |
-| `pos_fechamento/resultados.csv` | Classificação após o fechamento em 32 sessões |
-| `interrupcao/resultados.csv` | Resultado de 16 sessões com transferências integrais ou interrompidas |
-| `SHA256.txt` | Soma SHA-256 dos arquivos listados no manifesto |
-
-Os CSVs podem ser abertos em uma planilha. No Linux, execute `sha256sum -c SHA256.txt` na raiz da pasta extraída para verificar o manifesto antes de reprocessar os dados.
-
-## 2. Comandos individuais para conferência manual
-
-Esta etapa usa somente a biblioteca padrão do Python. Trabalhe em uma nova extração do ZIP, pois o programa regrava `previsoes.csv` e `pos_fechamento/resultados.csv` na pasta de trabalho.
-
-Para acompanhar cada comando separadamente, abra o PowerShell na raiz **do ZIP de dados extraído**, onde estão as pastas `pos_fechamento` e `interrupcao`. Confirme que `python --version` mostra uma versão do Python 3. No Linux ou WSL, use `python3` no lugar de `python` e mantenha a mesma sequência.
-
-```powershell
-cd pos_fechamento
-python classificar.py serie_ff/casos figura.png serie_ff/previsoes.csv
-python classificar.py serie_chr/casos figura.png serie_chr/previsoes.csv
-python conferir.py .
-
-cd ../interrupcao
-python medir.py . resultados_recalculados.csv
-Get-FileHash -Algorithm SHA256 resultados.csv,resultados_recalculados.csv
-cd ..
+```bash
+sha256sum -c SHA256.txt
+(cd interrupcao && sha256sum -c SHA256SUMS.txt)
 ```
 
-- Os dois comandos `classificar.py` leem os casos e a imagem de referência e gravam as previsões do Firefox e do Chrome Headless Shell, respectivamente. Cada linha recebe `D` para download, `I` para imagem incorporada ou `?` para resultado inconclusivo.
-- `conferir.py .` cruza as previsões com o gabarito e gera `pos_fechamento/resultados.csv`. Nos dados fornecidos, espera-se **12 acertos e 20 inconclusivos em 32 sessões**.
-- `medir.py . resultados_recalculados.csv` relê os arquivos preservados nas sessões de interrupção. O SHA-256 dos dois CSVs deve ser igual. Em Linux ou WSL, substitua `Get-FileHash ...` por `sha256sum resultados.csv resultados_recalculados.csv`.
+## Repetir a coleta no ambiente do estudo
 
-## 3. Repetir a coleta no ambiente do estudo
+Em Linux x86-64 ou WSL em x86-64, extraia `Dados_do_ensaio_TCC.zip` e abra o terminal na pasta que contém `ensaio.py`. Use Python 3.12, as versões indicadas abaixo e caminhos de saída novos a cada repetição. Execute os blocos em ordem, na mesma sessão do terminal. As portas e os identificadores de sessão variam a cada coleta.
 
-Execute os blocos a seguir na ordem apresentada, na mesma sessão do terminal. Para reproduzir as condições registradas no estudo, use Linux x86-64 ou WSL em x86-64, Python 3.12 e as versões de navegador e bibliotecas especificadas abaixo. Portas e identificadores de sessão são gerados em cada execução. Use caminhos de saída novos ao repetir os comandos de coleta.
-
-### 3.1. Preparar o Python e o Firefox
+### Preparar o Python e o Firefox
 
 A partir da raiz da extração:
 
@@ -90,7 +72,7 @@ export FIREFOX="$PLAYWRIGHT_BROWSERS_PATH/firefox-1538/firefox/firefox"
 
 O ambiente virtual separa as dependências do projeto. O Playwright instala o Firefox distribuído para a versão registrada. O último comando permite verificar a versão do executável, **153.0** no estudo. Em distribuições compatíveis, a instalação das dependências do sistema pode solicitar autorização de administrador.
 
-### 3.2. Rodar as duas séries iniciais no Firefox
+### Rodar as duas séries iniciais no Firefox
 
 ```bash
 python ensaio.py resultado_serie_1
@@ -99,7 +81,7 @@ python ensaio_temporal.py resultado_serie_2
 
 `ensaio.py` recria a primeira série. `ensaio_temporal.py` recria a segunda série e também registra a observação do cache antes do fechamento. Cada comando cria sua própria pasta com `resultados.csv` e artefatos de teste.
 
-### 3.3. Preparar o geckodriver e o Chrome Headless Shell
+### Preparar o geckodriver e o Chrome Headless Shell
 
 Para as duas etapas seguintes, instale também as dependências do Chromium e baixe os binários Linux x86-64 das versões registradas. Os comandos usam `curl`, `tar` e `unzip`.
 
@@ -121,7 +103,7 @@ export CHROMIUM="$PWD/.navegadores/chrome/chrome-headless-shell-linux64/chrome-h
 
 Os comandos exportam os caminhos absolutos dos executáveis para os scripts. Confira **geckodriver 0.36.0** e **Chrome Headless Shell 151.0.7922.34**. Se usar outro binário, registre a versão como uma condição diferente de execução. [Documentação do Playwright](https://playwright.dev/python/docs/browsers) · [geckodriver](https://github.com/mozilla/geckodriver/releases/tag/v0.36.0) · [Chrome for Testing](https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints)
 
-### 3.4. Coletar e classificar novas sessões após o fechamento
+### Coletar e classificar novas sessões após o fechamento
 
 ```bash
 cd pos_fechamento
@@ -135,7 +117,7 @@ cd ..
 
 Os dois primeiros comandos criam 16 sessões por navegador. Os classificadores geram as previsões, e `conferir.py` grava o cruzamento com o gabarito em `pos_fechamento/nova_coleta/resultados.csv`. Os nomes `serie_ff` e `serie_chr` são esperados pelo script de conferência.
 
-### 3.5. Coletar novas sessões de transferência interrompida
+### Coletar novas sessões de transferência interrompida
 
 ```bash
 cd interrupcao
