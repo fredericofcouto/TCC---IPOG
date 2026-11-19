@@ -2,10 +2,24 @@
 
 O arquivo [Dados_do_ensaio_TCC.zip](./Dados_do_ensaio_TCC.zip) reúne scripts, registros por sessão, perfis de laboratório, imagens sintéticas de referência e resultados em CSV. As coletas foram feitas em um servidor local com imagens sintéticas.
 
+## Conferência rápida no Windows
+
+1. No topo do repositório, clique em **Code → Download ZIP** e escolha **Extrair Tudo** no Windows.
+2. Abra a pasta extraída que contém `executar_testes.py` e `Dados_do_ensaio_TCC.zip`. Clique na barra de endereço do Explorador, digite `powershell` e pressione **Enter**.
+3. Na janela aberta, cole este comando e pressione **Enter**.
+
+```powershell
+python .\executar_testes.py
+```
+
+O script usa o Python 3 já instalado, extrai o ZIP de dados para uma pasta temporária e roda as duas conferências. O resultado esperado é **12 acertos e 20 casos inconclusivos em 32 sessões**, seguido de **dois hashes SHA-256 iguais**. Os CSVs recalculados ficam em uma nova pasta `Resultados_TCC_...`, ao lado do script.
+
+Se o Windows reconhecer o Python pelo iniciador `py`, o mesmo comando pode ser executado como `py -3 .\executar_testes.py`. Se ambos os comandos estiverem indisponíveis, instale o [Python para Windows](https://www.python.org/downloads/windows/) e reabra o PowerShell.
+
 | Se você quer… | Comece por |
 | --- | --- |
 | Ler as medições originais | Abra os arquivos CSV descritos na seção 1 |
-| Conferir os resultados sem instalar navegadores | Execute a seção 2 em uma cópia extraída do ZIP |
+| Conferir os resultados sem instalar navegadores | Use o comando da conferência rápida acima |
 | Gerar novas sessões no ambiente do estudo | Execute a seção 3 em Linux x86-64 ou WSL em um computador x86-64 |
 
 ## 1. Baixar e localizar os resultados
@@ -21,20 +35,20 @@ Abra o [arquivo ZIP no GitHub](./Dados_do_ensaio_TCC.zip), clique no botão de d
 
 Os CSVs podem ser abertos em uma planilha. No Linux, execute `sha256sum -c SHA256.txt` na raiz da pasta extraída para verificar o manifesto antes de reprocessar os dados.
 
-## 2. Conferir os resultados com os dados fornecidos
+## 2. Comandos individuais para conferência manual
 
 Esta etapa usa somente a biblioteca padrão do Python. Trabalhe em uma nova extração do ZIP, pois o programa regrava `previsoes.csv` e `pos_fechamento/resultados.csv` na pasta de trabalho.
 
-No Windows, abra o PowerShell na raiz da pasta extraída e confirme que `py -3 --version` mostra uma instalação do Python 3. No Linux ou WSL, use `python3` no lugar de `py -3` e mantenha a mesma sequência.
+Para acompanhar cada comando separadamente, abra o PowerShell na raiz **do ZIP de dados extraído**, onde estão as pastas `pos_fechamento` e `interrupcao`. Confirme que `python --version` mostra uma versão do Python 3. No Linux ou WSL, use `python3` no lugar de `python` e mantenha a mesma sequência.
 
 ```powershell
 cd pos_fechamento
-py -3 classificar.py serie_ff/casos figura.png serie_ff/previsoes.csv
-py -3 classificar.py serie_chr/casos figura.png serie_chr/previsoes.csv
-py -3 conferir.py .
+python classificar.py serie_ff/casos figura.png serie_ff/previsoes.csv
+python classificar.py serie_chr/casos figura.png serie_chr/previsoes.csv
+python conferir.py .
 
 cd ../interrupcao
-py -3 medir.py . resultados_recalculados.csv
+python medir.py . resultados_recalculados.csv
 Get-FileHash -Algorithm SHA256 resultados.csv,resultados_recalculados.csv
 cd ..
 ```
