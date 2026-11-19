@@ -4,18 +4,18 @@ O [ZIP do ensaio](./Dados_do_ensaio_TCC.zip) reúne os roteiros, as imagens sint
 
 ## Conferência rápida no Windows
 
-1. No GitHub, clique em **Code → Download ZIP** e escolha **Extrair Tudo** no Windows.
-2. Abra a pasta extraída que contém, lado a lado, `executar_testes.py` e `Dados_do_ensaio_TCC.zip`. Clique na barra de endereço do Explorador, digite `powershell` e pressione **Enter**.
-3. Execute o comando abaixo. O script extrai o ZIP de dados e trabalha em uma cópia temporária.
+1. Baixe [Dados_do_ensaio_TCC.zip](./Dados_do_ensaio_TCC.zip?raw=true) e escolha **Extrair Tudo** no Windows.
+2. Abra a pasta extraída que contém `executar_testes.py`, `pos_fechamento` e `interrupcao`. Na barra de endereço do Explorador, digite `powershell` e pressione **Enter**.
+3. Execute o comando abaixo. O script que acompanha o ZIP usa uma cópia temporária dos dados extraídos.
 
 ```powershell
 python .\executar_testes.py
 ```
 
 <details>
-<summary>Já extraiu o ZIP de dados?</summary>
+<summary>Já tem uma extração antiga sem o script?</summary>
 
-Na pasta que contém `pos_fechamento` e `interrupcao`, abra o PowerShell e execute estas linhas. A primeira baixa o script. A segunda roda a conferência usando a pasta já extraída.
+Na pasta que contém `pos_fechamento` e `interrupcao`, abra o PowerShell e execute estas linhas para baixar o script e rodar a conferência com os dados que você já extraiu.
 
 ```powershell
 Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/fredericofcouto/TCC---IPOG/main/executar_testes.py' -OutFile '.\executar_testes.py' -ErrorAction Stop
@@ -43,7 +43,7 @@ Os dois CSVs ficam em uma pasta nova `Resultados_TCC_...`, ao lado do script. A 
 
 Abra os CSVs em uma planilha para consultar as medições originais. As instruções de conferência manual estão nos arquivos `LEIA-ME.txt` da raiz e das pastas `pos_fechamento` e `interrupcao`.
 
-O SHA-256 de `Dados_do_ensaio_TCC.zip` é `2ecf66a5174d7371736ff6efe0a61b4cdee89a13697bc0bd51bd59efec4f94da`. Para verificar os arquivos internos em Linux ou WSL, execute os dois comandos abaixo a partir da raiz do ZIP de dados extraído.
+O SHA-256 de `Dados_do_ensaio_TCC.zip` é `6f808820682c9b2866cffcce9c443fce2df91cd1d99e6f91dff0896c3cd81444`. Para verificar os arquivos internos em Linux ou WSL, execute os dois comandos abaixo a partir da raiz do ZIP de dados extraído.
 
 ```bash
 sha256sum -c SHA256.txt
